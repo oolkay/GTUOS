@@ -22,7 +22,7 @@ class RegularFile : public File
         inline size_t           getSize() const {return size;}
 
         //OVERLOADING OPERATORS
-        friend std::ostream&    operator<<(std::ostream& os, const RegularFile& file);
+        friend std::ostream&    operator<<(std::ostream& os, const RegularFile& regFile);
 
         //FILE FUNCTIONS
         void                    ls() const override;

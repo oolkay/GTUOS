@@ -37,7 +37,6 @@ class File
         inline int          getType() const {return type;}
         inline std::string  getName() const {return name;}
         inline std::string  getPath() const {return path;}
-        std::string         getDir() const;
         inline std::string  getLastModified() const {return lastModified;}
 
 

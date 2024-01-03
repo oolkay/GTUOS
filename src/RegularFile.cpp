@@ -25,13 +25,11 @@ void RegularFile::setSize(size_t size)
     this->size = size;
 }
 
-std::ostream& operator<<(std::ostream& os, const RegularFile& file)
+std::ostream& operator<<(std::ostream& os, const RegularFile& regFile)
 {
-    os << "Type: " << file.type << std::endl;
-    os << "Name: " << file.name << std::endl;
-    os << "Path: " << file.path << std::endl;
-    os << "Last modified: " << file.lastModified << std::endl;
-    os << "Content: " << file.content << std::endl;
+    os << regFile.getType() << regFile.getName() << " " << regFile.getPath()
+        << " " << regFile.getLastModified() << " " << regFile.getSize() << "\n%\n"
+        << regFile.getContent() << "\n%\n";
     return os;
 }
 

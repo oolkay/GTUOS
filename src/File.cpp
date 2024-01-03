@@ -56,16 +56,6 @@ void File::cat() const
     //TODO
 }
 
-
-std::string File::getDir() const
-{
-
-    if (path.find_last_of("/") == 0)
-        return "/";
-    return path.substr(0, path.find_last_of("/"));
-}
-
-
 File::~File()
 {
     if (name.empty() == false)

@@ -1,0 +1,15 @@
+D / / Jan 03 18:24
+D a /a Jan 03 18:48
+D b /a/b Jan 03 18:48
+D c /a/c Jan 03 18:48
+F a.c /a/c/a.c OLK 31 31:31
+%
+asda
+asdaas
+Dasd
+
+
+%
+D a1 /a1 Jan 03 20:16
+D a2 /a2 Jan 03 20:16
+D a3 /a3 Jan 03 20:26

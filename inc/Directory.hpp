@@ -22,17 +22,21 @@ class Directory : public File
         inline Directory*           getPrevDir() const {return prevDir;}
 
         //OVERLOADING OPERATORS
-        friend std::ostream&        operator<<(std::ostream& os, const Directory& directory);
+        friend std::ostream&               operator<<(std::ostream& os, const Directory& dir);
 
         //ADD ELEMENTS TO VECTOR
         void                        addFile(File *file);
 
         //FILE FUNCTIONS
         void                        ls() const override;
+        void                        lsRecursive() const;
 
         //FIND FUNCTIONS
         File*                       findFileInCurrentByName(const std::string& name);
         Directory*                  findDirInCurrentByPath(const std::string& path);
+        Directory*                  findDirInCurrentByName(const std::string& name);
+
+
 
         //DESTRUCTOR
         ~Directory();   

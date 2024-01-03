@@ -39,7 +39,27 @@ void Directory::ls() const
     {
         std::cout   << static_cast<char>(file->getType()) << " "
                 << file->getName() << "      "
-                << file->getLastModified() << std::endl;
+                << file->getLastModified();
+        if (file->getType() == REGULAR_FILE)
+            cout <<"     " << dynamic_cast<RegularFile *>(file)->getSize() << "Bytes" << endl;
+        else
+            cout << endl;
+    }
+}
+
+void Directory::lsRecursive() const
+{
+    std::cout << this->getPath() << ":" << std::endl;
+    this->ls();
+    std::cout << std::endl;
+    for (auto file : files)
+    {
+        if (file->getType() == DIRECTORY && 
+            file->getName() != "." && file->getName() != "..")
+        {
+            Directory *dir = static_cast<Directory *>(file);
+            dir->lsRecursive();
+        }
     }
 }
 
@@ -61,6 +81,22 @@ Directory* Directory::findDirInCurrentByPath(const std::string& path)
             return static_cast<Directory *>(file);
     }
     return nullptr;
+}
+
+Directory* Directory::findDirInCurrentByName(const std::string& name)
+{
+    for (auto file : files)
+    {
+        if (file->getType() == DIRECTORY && file->getName() == name)
+            return static_cast<Directory *>(file);
+    }
+    return nullptr;
+}
+
+std::ostream& operator<<(std::ostream& os, const Directory& dir)
+{
+    os << (char)dir.getType() << " " << dir.getName() << " " << dir.getPath() << " " << dir.getLastModified() << "\n";
+    return os;
 }
 
 Directory::~Directory()
