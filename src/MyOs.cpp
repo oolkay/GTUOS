@@ -184,6 +184,8 @@ void MyOs::executeCommand(const vector<string>& args)
                 dynamic_cast<RegularFile *>(file)->cat();
             else if (file == nullptr)
                 std::cerr << NO_SUCH_FILE << endl;
+            else if (file->getType() == DIRECTORY)
+                std::cerr << IS_DIR << endl;
         }
     }
     else if (cmd == "pwd")
