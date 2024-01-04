@@ -1,15 +1,54 @@
-D / / Jan 03 18:24
-D a /a Jan 03 18:48
-D b /a/b Jan 03 18:48
-D c /a/c Jan 03 18:48
-F a.c /a/c/a.c OLK 31 31:31
+D / / Jan 04 16:16
+F a.c /a.c Jan 04 16:16 297Bytes
 %
-asda
-asdaas
-Dasd
+#include <stdio.h>
 
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
 
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
 %
-D a1 /a1 Jan 03 20:16
-D a2 /a2 Jan 03 20:16
-D a3 /a3 Jan 03 20:26
+D f /f Jan 04 16:16
+F a.c /f/a.c Jan 04 16:16 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+D b /f/b Jan 04 16:16
+D b /b Jan 04 16:16

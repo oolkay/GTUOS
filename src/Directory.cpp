@@ -95,12 +95,13 @@ Directory* Directory::findDirInCurrentByName(const std::string& name)
 
 std::ostream& operator<<(std::ostream& os, const Directory& dir)
 {
-    os << (char)dir.getType() << " " << dir.getName() << " " << dir.getPath() << " " << dir.getLastModified() << "\n";
+    os << (char)dir.getType() << " " << dir.getName() << " " << dir.getPath() << " " << dir.getLastModified();
     return os;
 }
 
 Directory::~Directory()
 {
     for (auto file : files)
-        delete file;
+        if (file != nullptr)
+            delete file;
 }

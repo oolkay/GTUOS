@@ -18,78 +18,91 @@ using std::stringstream;
 #define MISSING_ARG  "[ERROR] Missing argument"
 #define EXTRA_ARG    "[ERROR] Too many arguments"
 
+#define USER_NAME    "omer"
+#define HOST_NAME    "olkayOS"
 
-//abstract olabilir?
-//THIS CLASS IS THE INTERFACE FOR THE OS
-//static olabilir!é!!!!!!!
+#define DEFAULT "\033[0;39m"
+#define GRAY "\033[0;90m"
+#define RED "\033[0;91m"
+#define GREEN "\033[0;92m"
+#define YELLOW "\033[0;93m"
+#define BLUE "\033[0;94m"
+#define MAGENTA "\033[0;95m"
+#define CYAN "\033[0;96m"
+#define WHITE "\033[0;97m"
+
+// STATIC CLASS
+// NO OBJECT CREATION
 class MyOs
 {
     public:
         MyOs();
         ~MyOs();
+        
 
         //GETTERS
 
-        File*                   getSpesificFile(const string& path);
-        Directory*              getCurrentDir();
-        string                  getAbsolutePath(const string& path) const;
-        inline std::size_t      getDiskSize() const {return diskSize;}
+        static inline std::size_t      getDiskSize()  {return diskSize;}
 
         //SETTERS
     
+        //PATH FUNCTIONS
+
+        static string                  handleRelativePath(const string& relativePath);
+        static vector<string >         splitPath(const string& path, char delimeter);
+        static string                  getAbsolutePath(const string& path);
 
         //TIME FUNCTIONS
 
-        string                  getDateAndTime() const;
+        static string                  getDateAndTime();
 
         //FILE FUNCTIONS
 
-        char                    isFileExistInMyOs(const string& path); //bir de bu
-        bool                    isFileExistInRegOs(const string& path);
-        string                  handleRelativePath(const string& relativePath) const;
-        void                    cd(const string& path);
-        void                    cdToGivenPath(const string& path);
+        static char                    isFileExistInMyOs(const string& path); //bir de bu
+        static bool                    isFileExistInRegOs(const string& path);
+        static File*                   getSpesificFile(const string& path);
+        static Directory*              getCurrentDir();
 
         //INPUT FUNCTIONS
 
-        string                  readInput();
-        bool                    validateInput(const vector<string>& args);//throws UNKNOWN_CMD
-        vector<string >         parseInput(const string& inp);
-        vector<string >         splitPath(const string& path, char delimeter) const;
+        static string                  readInput();
+        static bool                    validateInput(const vector<string>& args);//throws UNKNOWN_CMD
+        static vector<string >         parseInput(const string& inp);
 
         //CP FUNCTIONS
 
-        void                    cp(const string& src, const string& dest);
-        void                    cpFileFromMyOs(const string& src);
-        void                    cpFileFromRegularOs(const string& src);//throws NO_SUCH_FILE
+        static void                    cp(const string& src, const string& dest);
+        static void                    cpFileFromMyOs(const string& src);
+        static void                    cpFileFromRegularOs(const string& src);//throws NO_SUCH_FILE
 
         //MKDIR FUNCTIONS
-        void                    mkdir(const string& arg);
+
+        static void                    mkdir(const string& arg);
+
+        // CD FUNCTIONS
+
+        static void                    cd(const string& path);
+        static void                    cdToGivenPath(const string& path);
 
         // OS FUNCTIONS
 
-        void                    run();
-        void                    printPrompt() const;
-        void                    executeCommand(const vector<string>& args);
+        static void                    init();
+        static void                    run();
+        static void                    printPrompt();
+        static void                    executeCommand(const vector<string>& args);
+        static void                    freeTempMemory();
 
         // DISK FUNCTIONS
-        void                    readDisk();
-        void                    writeDisk(File* data); //inyt döndürebilir
-        void                    loadDirectory(const string& name, const string& path, const string& lastModified);
-        void                    loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size);
-        void                    loadRegularFileContentAndSize(std::string& content, size_t& size, std::ifstream &file);
+        static void                    readDisk();
+        static void                    writeDisk(File* data); //inyt döndürebilir
+        static void                    loadDirectory(const string& name, const string& path, const string& lastModified);
+        static void                    loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size);
+        static void                    loadRegularFileContent(std::string& content, std::ifstream &file);
 
     private:
-        Directory*                  curDir;
-        Directory*                  rootDir;
-        std::size_t                 diskSize;
-
-
-        //polymorphic vector, it can contain
-        //         ->            linkedfiles
-        //         ->            directories
-        //         ->            regularfiles
-        std::vector<File *>        files;
+        static Directory*                  curDir;
+        static Directory*                  rootDir;
+        static std::size_t                 diskSize;
         
 };
 

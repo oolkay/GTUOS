@@ -2,6 +2,10 @@
 #include <stdexcept>
 #include <iostream>
 
+using std::string;
+using std::cout;
+using std::endl;
+
 RegularFile::RegularFile()
 {
     /*DEFAULT CONSTRUCTORU KULLANMAYI ENGELLEYEBİLİRİM*/
@@ -27,9 +31,9 @@ void RegularFile::setSize(size_t size)
 
 std::ostream& operator<<(std::ostream& os, const RegularFile& regFile)
 {
-    os << regFile.getType() << regFile.getName() << " " << regFile.getPath()
-        << " " << regFile.getLastModified() << " " << regFile.getSize() << "\n%\n"
-        << regFile.getContent() << "\n%\n";
+    os << static_cast<char>(regFile.getType()) << " " << regFile.getName() << " " << regFile.getPath()
+        << " " << regFile.getLastModified() << " " << regFile.getSize() << "Bytes" << "\n%\n"
+        << regFile.getContent() << "\n%";
     return os;
 }
 

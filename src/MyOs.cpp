@@ -16,16 +16,41 @@ using std::endl;
 using std::ifstream;
 using std::ofstream;
 
-MyOs::MyOs()
+Directory* MyOs::rootDir = nullptr;
+Directory* MyOs::curDir = nullptr;
+size_t     MyOs::diskSize = 0;
+
+// MyOs::~MyOs()
+// {
+//     for (auto& file : files)
+//         delete file;
+// }
+
+void MyOs::init()
 {
-    readDisk();
-    curDir = rootDir;
+    try
+    {
+        readDisk();
+        if (rootDir == nullptr)
+        {
+            rootDir = new Directory("/", "/", getDateAndTime());
+            rootDir->addFile(new Directory(".", "/.", getDateAndTime()));
+            rootDir->setPrevDir(nullptr);
+            writeDisk(rootDir);
+        }
+        curDir = rootDir;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        exit (-1);
+    }
 }
 
-MyOs::~MyOs()
+void MyOs::freeTempMemory()
 {
-    for (auto& file : files)
-        delete file;
+    if (rootDir != nullptr)
+        delete rootDir;
 }
 
 // RUN FUNCTION IS THE MAIN LOOP OF THE OS
@@ -57,6 +82,7 @@ void MyOs::run()
             }
         }
     }
+    freeTempMemory();
 }
 
 // READS INPUT FROM USER
@@ -128,7 +154,7 @@ vector<string> MyOs::parseInput(const string& inp)
     return args;
 }
 
-vector<string> MyOs::splitPath(const string& path, char delimeter) const
+vector<string> MyOs::splitPath(const string& path, char delimeter)
 {
     vector<string>  paths;
     stringstream    ss(path);
@@ -141,9 +167,10 @@ vector<string> MyOs::splitPath(const string& path, char delimeter) const
 }
 
 // PRINTS THE PROMPT
-void MyOs::printPrompt() const
+void MyOs::printPrompt()
 {
-    std::cout << "> ";
+    std::cout << CYAN << USER_NAME << BLUE << "@" <<HOST_NAME
+                <<"   " <<MAGENTA << curDir->getPath() << "> " << DEFAULT;
 }
 
 // EXECUTES THE COMMAND
@@ -197,7 +224,7 @@ void MyOs::executeCommand(const vector<string>& args)
 
 // currentDir + path    = newPath
 // /home/omer + Desktop = /home/omer/Desktop
-string MyOs::handleRelativePath(const string& relativePath) const
+string MyOs::handleRelativePath(const string& relativePath)
 {
     // if current directory is root directory
     if (curDir->getPath() == "/")
@@ -221,6 +248,7 @@ void MyOs::cd(const string& path)
 
 void MyOs::cdToGivenPath(const string& path)
 {
+    //a/b/c -> a   b   c
     vector<string>  paths = splitPath(path, '/');
     Directory*      tmpDirCur = curDir;
     if (path[0] == '/')
@@ -395,14 +423,14 @@ void MyOs::cp(const string& src, const string& dest)
 
 // RETURNS THE ABSOLUTE PATH OF THE GIVEN PATH
 // IF THE PATH IS ALREADY ABSOLUTE RETURNS ITSELF
-string MyOs::getAbsolutePath(const string& path) const
+string MyOs::getAbsolutePath(const string& path)
 {
     if (path[0] == '/')
         return path;
     return handleRelativePath(path);
 }
 
-string MyOs::getDateAndTime() const
+string MyOs::getDateAndTime()
 {
     // Şu anki zamanı elde et
     auto current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -460,9 +488,9 @@ void MyOs::readDisk()
                 lastModified = properties[3] + " " + properties[4] + " " + properties[5];
                 if (fileType == REGULAR_FILE)
                 {
-                    size_t size = 0;
+                    size_t size = std::stoi(properties[6]);
                     string content;
-                    loadRegularFileContentAndSize(content, size, disk);
+                    loadRegularFileContent(content, disk);
                     loadRegularFile(fileName, filePath, lastModified, content, size);
                 }
                 else if (fileType == DIRECTORY)
@@ -474,7 +502,7 @@ void MyOs::readDisk()
     }
     else
         throw std::runtime_error(CAN_NOT_OPEN_DISK);
-
+    disk.close();
 }
 
 //throws exception
@@ -493,8 +521,10 @@ void MyOs::loadDirectory(const string& name, const string& path, const string& l
         if (parentDirPath.empty())
             parentDirPath = "/";
         Directory *parentDir = dynamic_cast<Directory *>(getSpesificFile(parentDirPath));
+        if (parentDir == nullptr)
+            throw std::runtime_error(NO_SUCH_DIR);
         newDir->addFile(new Directory(".", path+"/.", lastModified));
-        newDir->addFile(new Directory("..", path+"/..", lastModified));
+        newDir->addFile(new Directory("..", path+"/..", parentDir->getLastModified()));
         newDir->setPrevDir(parentDir);
         parentDir->addFile(newDir);
     }
@@ -504,6 +534,8 @@ void MyOs::loadDirectory(const string& name, const string& path, const string& l
 void MyOs::loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size)
 {
     string     parentDirPath = path.substr(0, path.find_last_of("/"));
+    if (parentDirPath.empty())
+        parentDirPath = "/";
     RegularFile *newFile = new RegularFile(name, path, lastModified, content, size);
     Directory   *parentDir = dynamic_cast<Directory *>(getSpesificFile(parentDirPath));
     if (parentDir != nullptr)
@@ -512,7 +544,7 @@ void MyOs::loadRegularFile(const string& name, const string& path, const string&
         throw std::runtime_error(NO_SUCH_DIR);
 }
 
-void MyOs::loadRegularFileContentAndSize(std::string& content, size_t& size, std::ifstream &file)
+void MyOs::loadRegularFileContent(std::string& content, std::ifstream &file)
 {
     string  line;
     getline(file, line);
@@ -520,10 +552,9 @@ void MyOs::loadRegularFileContentAndSize(std::string& content, size_t& size, std
     {
         content += line;
         content += "\n";
-        size++;
     }
+    content.pop_back(); //remove last \n
 }
-
 
 //throws runtime error
 void MyOs::writeDisk(File* data)
@@ -538,17 +569,18 @@ void MyOs::writeDisk(File* data)
         if (data->getType() == DIRECTORY)
         {
             Directory* dir = dynamic_cast<Directory *>(data);
-            disk << *dir;
+            disk << *dir << "\n";
         }
         else if (data->getType() == REGULAR_FILE)
         {
             RegularFile* file = dynamic_cast<RegularFile *>(data);
-            disk << *file;
+            disk << *file << "\n";
             diskSize += file->getSize();
         }
     }
     else
         throw std::runtime_error(CAN_NOT_OPEN_DISK);
+    disk.close();
 }
 
 Directory* MyOs::getCurrentDir()

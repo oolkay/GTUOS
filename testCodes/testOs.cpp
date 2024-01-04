@@ -14,6 +14,6 @@ using std::endl;
 
 int main()
 {
-    MyOs os;
-    os.run();
+    MyOs::init();
+    MyOs::run();
 }
