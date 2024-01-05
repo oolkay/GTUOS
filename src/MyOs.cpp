@@ -20,12 +20,6 @@ Directory* MyOs::rootDir = nullptr;
 Directory* MyOs::curDir = nullptr;
 size_t     MyOs::diskSize = 0;
 
-// MyOs::~MyOs()
-// {
-//     for (auto& file : files)
-//         delete file;
-// }
-
 void MyOs::init()
 {
     try
@@ -94,6 +88,7 @@ string MyOs::readInput()
 }
 
 // VALIDATES THE INPUT// Şu anki zamanı elde et
+//bu fonksiyonu gözden geçir
 // THROWs UNKNOWN_CMD, MISSING_ARG, EXTRA_ARG
 bool MyOs::validateInput(const vector<string>& args)
 {
@@ -104,7 +99,7 @@ bool MyOs::validateInput(const vector<string>& args)
     cmd = args[0];
     if (args.size() > 0)
     {
-        if (!(cmd == "ls" || cmd == "mkdir" || cmd == "exit"
+        if (!(cmd == "ls" || cmd == "mkdir" || cmd == "exit" || cmd == "rm"
                 || cmd == "cd" || cmd == "cp" || cmd == "cat" || cmd == "pwd"))
         {
             throw std::runtime_error(UNKNOWN_CMD);
@@ -201,6 +196,17 @@ void MyOs::executeCommand(const vector<string>& args)
     {
         cp(args[1], args[2]);
     }
+    else if (cmd == "rm")
+    {
+        if (args.size() == 2)
+        {
+            rm(args[1]);
+        }
+        else if (args.size() == 3 && args[1] == "-r")
+        {
+
+        }
+    }
     else if (cmd == "cat")
     {
         string fileToCat = args[1];
@@ -243,7 +249,8 @@ void MyOs::cd(const string& path)
         curDir = rootDir;
     else if (path == ".." && curDir->getPath() != "/")
         curDir = curDir->getPrevDir();
-    cdToGivenPath(path);
+    else
+        cdToGivenPath(path);
 }
 
 void MyOs::cdToGivenPath(const string& path)
@@ -335,26 +342,45 @@ void MyOs::cpFileFromMyOs(const string& src)
     string name;
     string path;
     string content;
-    string time = getDateAndTime();
     File *file  = getSpesificFile(src);
-    if (file->getType() == REGULAR_FILE)
-    {
-        RegularFile *srcFile = dynamic_cast<RegularFile*>(file);
-        name = srcFile->getName();
-        path = curDir->getPath() + "/" + name;
-        content = srcFile->getContent();
-        File* copyFile = new RegularFile(name, path, time, content, srcFile->getSize());
-        curDir->addFile(copyFile);
-        curDir->findDirInCurrentByName(".")->setLastModified(time);
-        writeDisk(copyFile);
-    }
-    // else if (file->getType() == LINK)
-    // {
-
-    // }
-
+    if (file == nullptr)
+        throw std::runtime_error(NO_SUCH_FILE);
+    cout << file->getName() << file->getPath() << endl;
+    if (curDir->isDirContainFile(file->getName()))
+        throw std::runtime_error(SAME_FILE);
+    generateCopyFile(file);
 }
 
+void MyOs::generateCopyFile(File *src)
+{
+    string name = src->getName();
+    string path = curDir->getPath() + "/" + name;
+    string time = getDateAndTime();
+    cout << (char)src->getType() << endl;
+    if (src->getType() == REGULAR_FILE)
+    {
+        RegularFile *srcFile = dynamic_cast<RegularFile*>(src);
+        RegularFile *copyRegular = new RegularFile(name, path, time, srcFile->getContent(), srcFile->getSize());
+        curDir->addFile(copyRegular);
+        curDir->findDirInCurrentByName(".")->setLastModified(time);
+        writeDisk(copyRegular);
+    }
+    else if (src->getType() == DIRECTORY)
+    {
+        Directory *srcDir = dynamic_cast<Directory*>(src);
+        Directory *copyDir = new Directory(name, path, time);
+        copyDir->setPrevDir(curDir);
+        copyDir->addFile(new Directory(".", path+"/.", time));
+        copyDir->addFile(new Directory("..", path+"/..", srcDir->getPrevDir()->getLastModified()));
+        curDir->addFile(copyDir);
+        curDir->findDirInCurrentByName(".")->setLastModified(time);
+        writeDisk(copyDir);
+    }
+    else if (src->getType() == LINK)
+    {
+
+    }
+}
 
 // COPY THE FILE FROM REGULAR OS TO MY OS(CURRENT DIR)
 // THROWS NO_SUCH_FILE
@@ -404,7 +430,11 @@ void MyOs::cp(const string& src, const string& dest)
     int    isExist = 0;
     (void)dest;
     if (isFileExistInRegOs(src) == true)
+    {
+        if (curDir->isDirContainFile(src.substr(src.find_last_of("/") + 1)))
+            throw std::runtime_error(SAME_FILE);
         cpFileFromRegularOs(src);
+    }
     else
     {
         isExist = isFileExistInMyOs(src);
@@ -588,3 +618,36 @@ Directory* MyOs::getCurrentDir()
     return curDir;
 }
 
+void MyOs::rm(const string& path)
+{
+    string absolutePath = getAbsolutePath(path);
+    string parentDirPath = absolutePath.substr(0, absolutePath.find_last_of("/"));
+    if (parentDirPath.empty())
+        parentDirPath = "/";
+    File *file = getSpesificFile(absolutePath);
+    if (file == nullptr)
+        throw std::runtime_error(NO_SUCH_FILE);
+    if (file->getType() == REGULAR_FILE)
+    {
+        Directory *parentDir = dynamic_cast<Directory *>(getSpesificFile(parentDirPath));
+        parentDir->removeFile(file);
+        removeDataFromDisk(file);
+    }
+    else if (file->getType() == DIRECTORY)
+        throw std::runtime_error(IS_DIR);
+}
+
+void MyOs::removeDataFromDisk(File *data)
+{
+    ofstream ofs;
+    (void)data;
+
+    ofs.open(DISK_NAME);
+    if (ofs.is_open())
+    {
+        ofs << *rootDir;
+    }
+    else
+        throw std::runtime_error(CAN_NOT_OPEN_DISK);
+    ofs.close();
+}

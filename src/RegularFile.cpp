@@ -53,6 +53,7 @@ void RegularFile::cat() const
 
 RegularFile::~RegularFile()
 {
+    cout << "RegularFile destructor" << endl;
     if (content.empty() == false)
         content.clear();
 }

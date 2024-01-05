@@ -3,6 +3,9 @@
     "files.associations": {
         "*.ejs": "html",
         "array": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "typeinfo": "cpp",
+        "string": "cpp",
+        "*.tcc": "cpp"
     }
 }

@@ -39,6 +39,14 @@ void File::setPath(std::string path)
     this->path = path;
 }
 
+std::string File::getPathWorkingDirectory() const
+{
+    std::string pwd = getPath().substr(0, getPath().find_last_of("/"));
+    if (pwd.empty())
+        pwd = "/";
+    return pwd;
+}
+
 void File::setLastModified(std::string lastModified)
 {
     this->lastModified = lastModified;

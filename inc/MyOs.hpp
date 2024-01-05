@@ -7,6 +7,7 @@
 #include "File.hpp"
 #include "Directory.hpp"
 #include "Disk.hpp"
+#include "LinkedFile.hpp"
 // #include "Directory.hpp"
 // #include "Link.hpp"
 
@@ -73,6 +74,7 @@ class MyOs
 
         static void                    cp(const string& src, const string& dest);
         static void                    cpFileFromMyOs(const string& src);
+        static void                    generateCopyFile(File *src);
         static void                    cpFileFromRegularOs(const string& src);//throws NO_SUCH_FILE
 
         //MKDIR FUNCTIONS
@@ -92,9 +94,13 @@ class MyOs
         static void                    executeCommand(const vector<string>& args);
         static void                    freeTempMemory();
 
+        // RM FUNCTIONS
+        static void                    rm(const string& path);
+
         // DISK FUNCTIONS
         static void                    readDisk();
         static void                    writeDisk(File* data); //inyt döndürebilir
+        static void                    removeDataFromDisk(File* data);
         static void                    loadDirectory(const string& name, const string& path, const string& lastModified);
         static void                    loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size);
         static void                    loadRegularFileContent(std::string& content, std::ifstream &file);

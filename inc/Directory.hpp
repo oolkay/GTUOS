@@ -26,6 +26,7 @@ class Directory : public File
 
         //ADD ELEMENTS TO VECTOR
         void                        addFile(File *file);
+        void                        removeFile(File *file);
 
         //FILE FUNCTIONS
         void                        ls() const override;
@@ -35,6 +36,7 @@ class Directory : public File
         File*                       findFileInCurrentByName(const std::string& name);
         Directory*                  findDirInCurrentByPath(const std::string& path);
         Directory*                  findDirInCurrentByName(const std::string& name);
+        bool                        isDirContainFile(const std::string& name) const;
 
 
 

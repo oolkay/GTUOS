@@ -33,6 +33,18 @@ void Directory::addFile(File *file)
     files.push_back(file);
 }
 
+void Directory::removeFile(File *file)
+{
+    for (auto it = files.begin(); it != files.end(); ++it)
+    {
+        if (*it == file)
+        {
+            files.erase(it);
+            return ;
+        }
+    }
+}
+
 void Directory::ls() const
 {
     for (auto file : files)
@@ -71,6 +83,16 @@ File* Directory::findFileInCurrentByName(const std::string& name)
             return file;
     }
     return nullptr;
+}
+
+bool Directory::isDirContainFile(const std::string& name) const
+{
+    for (auto file : files)
+    {
+        if (file->getName() == name)
+            return true;
+    }
+    return false;
 }
 
 Directory* Directory::findDirInCurrentByPath(const std::string& path)

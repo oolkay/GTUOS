@@ -16,7 +16,7 @@ testDirectory:
 	$(CC) $(CFLAGS) testDirectory.cpp ${SRCDIR}/File.cpp ${SRCDIR}/Directory.cpp -o testDirectory.exe
 
 testOs:
-	$(CC) $(CFLAGS) testOs.cpp ${SRCDIR}/File.cpp ${SRCDIR}/MyOs.cpp ${SRCDIR}/RegularFile.cpp ${SRCDIR}/Directory.cpp ${SRCDIR}/Disk.cpp -o testOs.exe
+	$(CC) $(CFLAGS) testOs.cpp ${SRCDIR}/File.cpp ${SRCDIR}/MyOs.cpp ${SRCDIR}/RegularFile.cpp ${SRCDIR}/LinkedFile.cpp ${SRCDIR}/Directory.cpp ${SRCDIR}/Disk.cpp -o testOs.exe
 
 clean:
 	@rm -f *.o

@@ -34,9 +34,10 @@ class File
         void                setLastModified(std::string lastModified);//throw(std::invalid_argument);
 
         //GETTERS
-        inline int          getType() const {return type;}
+        inline char         getType() const {return type;}
         inline std::string  getName() const {return name;}
         inline std::string  getPath() const {return path;}
+        std::string         getPathWorkingDirectory() const;
         inline std::string  getLastModified() const {return lastModified;}
 
 
@@ -51,7 +52,7 @@ class File
         virtual             ~File() = 0;
 
     protected:
-        int                 type;
+        char                type;
         std::string         name;
         std::string         path;
         std::string         lastModified;
