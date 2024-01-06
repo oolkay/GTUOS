@@ -26,9 +26,6 @@ class LinkedFile : public File
         void                    ls() const override;
         void                    cat() const override;
 
-
-
-
     private:
         File* linkedFile;
 };

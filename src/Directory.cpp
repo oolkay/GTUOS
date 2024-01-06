@@ -149,6 +149,7 @@ Directory::~Directory()
         if (file != nullptr)
         {
             delete file;
+            file = nullptr;
         }
     }
 }

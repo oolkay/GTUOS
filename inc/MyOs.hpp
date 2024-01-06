@@ -54,6 +54,7 @@ class MyOs
         static string                  handleRelativePath(const string& relativePath);
         static vector<string >         splitPath(const string& path, char delimeter);
         static string                  getAbsolutePath(const string& path);
+        static Directory*              getParentDir(const string& path);
 
         //TIME FUNCTIONS
 
@@ -111,6 +112,7 @@ class MyOs
         static void                    loadDirectory(const string& name, const string& path, const string& lastModified);
         static void                    loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size);
         static void                    loadRegularFileContent(std::string& content, std::ifstream &file);
+        static void                    loadLinkedFile(const string& name, const string& path, const string& lastModified, const string& linkedFile);
 
     private:
         static Directory*                  curDir;

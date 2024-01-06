@@ -19,7 +19,7 @@ void LinkedFile::ls() const
 {
     string linkName;
     if (this->linkedFile != nullptr)
-    linkName = linkedFile->getName();
+        linkName = linkedFile->getName();
     std::cout   << static_cast<char>(type) << " "
                 << name+"->"+linkName << "      "
                 << lastModified << "  " << std::endl;
@@ -27,10 +27,10 @@ void LinkedFile::ls() const
 
 void LinkedFile::cat() const
 {
-    if (!linkedFile)
-        std::cerr << NO_LINK << endl;
+    if (linkedFile == nullptr)
+        throw std::runtime_error(NO_LINK);
     if (linkedFile->getType() == DIRECTORY)
-        std::cerr << IS_DIR << endl;
+        throw std::runtime_error(IS_DIR);
     else
         linkedFile->cat();
 }

@@ -44,7 +44,10 @@ void MyOs::init()
 void MyOs::freeTempMemory()
 {
     if (rootDir != nullptr)
+    {
         delete rootDir;
+        rootDir = nullptr;
+    }
 }
 
 // RUN FUNCTION IS THE MAIN LOOP OF THE OS
@@ -219,10 +222,25 @@ void MyOs::executeCommand(const vector<string>& args)
 string MyOs::handleRelativePath(const string& relativePath)
 {
     // if current directory is root directory
+    if (relativePath.empty())
+        return curDir->getPath();
     if (curDir->getPath() == "/")
         return ("/" + relativePath);
     else
         return curDir->getPath() + "/" + relativePath;
+}
+
+Directory* MyOs::getParentDir(const string& path)
+{
+    string absPath = getAbsolutePath(path);
+    string parentDirPath = absPath.substr(0, absPath.find_last_of("/"));
+    if (parentDirPath.empty())
+        parentDirPath = "/";
+    Directory *tmpCur = curDir;
+    cd(parentDirPath);
+    Directory *parentDir = curDir;
+    curDir = tmpCur;
+    return parentDir;
 }
 
 // Changes the current directory
@@ -309,13 +327,13 @@ File* MyOs::getSpesificFile(const string& path)
     string pwd              = absolutePath.substr(0, absolutePath.find_last_of("/"));
     string name             = absolutePath.substr(absolutePath.find_last_of("/") + 1);
     Directory* tempCurDir   = curDir;
+    cout << "pwd: " << pwd << endl;
     //path /a.c gibi bir şey ise yani root directoryde ise
     //pwd boş oluyor
     if (!pwd.empty())
         cd(pwd);
     else
         curDir = rootDir;
-
     vector<File *> files = curDir->getFiles();
     for (const auto& file : files)
     {
@@ -526,6 +544,13 @@ void MyOs::readDisk()
                 {
                     loadDirectory(fileName, filePath, lastModified);
                 }
+                // else if (fileType == LINK)
+                // {
+                //     if (fileName.find("->") == std::string::npos)
+                //         throw std::runtime_error(CAN_NOT_LOAD_LINK);
+                //     string linkPath = fileName.substr(fileName.find("->") + 1);
+                //     loadLink(fileName, filePath, lastModified, linkedFile);
+                // }
             }
         }
     }
@@ -546,10 +571,7 @@ void MyOs::loadDirectory(const string& name, const string& path, const string& l
     }
     else
     {
-        string    parentDirPath = path.substr(0, path.find_last_of("/"));
-        if (parentDirPath.empty())
-            parentDirPath = "/";
-        Directory *parentDir = dynamic_cast<Directory *>(getSpesificFile(parentDirPath));
+        Directory *parentDir = getParentDir(path);
         if (parentDir == nullptr)
             throw std::runtime_error(NO_SUCH_DIR);
         newDir->addFile(new Directory(".", path+"/.", lastModified));
@@ -562,11 +584,8 @@ void MyOs::loadDirectory(const string& name, const string& path, const string& l
 //throws runtime error
 void MyOs::loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size)
 {
-    string     parentDirPath = path.substr(0, path.find_last_of("/"));
-    if (parentDirPath.empty())
-        parentDirPath = "/";
     RegularFile *newFile = new RegularFile(name, path, lastModified, content, size);
-    Directory   *parentDir = dynamic_cast<Directory *>(getSpesificFile(parentDirPath));
+    Directory   *parentDir = getParentDir(path);
     if (parentDir != nullptr)
         parentDir->addFile(newFile);
     else
@@ -624,15 +643,14 @@ void MyOs::rm(const vector<string>& args)
         absolutePath = getAbsolutePath(args[1]);
     else if (args.size() == 3)
         absolutePath = getAbsolutePath(args[2]);
-    string parentDirPath = absolutePath.substr(0, absolutePath.find_last_of("/"));
-    if (parentDirPath.empty())
-        parentDirPath = "/";
-    Directory* parentDir = dynamic_cast<Directory *>(getSpesificFile(parentDirPath));
+    Directory* parentDir = getParentDir(absolutePath);
     File *file = getSpesificFile(absolutePath);
     if (file == nullptr)
         throw std::runtime_error(NO_SUCH_FILE);
     if (file->getType() == REGULAR_FILE || file->getType() == LINK)
         rmFile(file, parentDir);
+    else if (file->getName() == "." || file->getName() == "..")
+        throw std::runtime_error(CAN_NOT_REMOVE);
     else if (file->getType() == DIRECTORY && args.size() == 3)
         rmRecursive(file, parentDir);
     else if (file->getType() == DIRECTORY && args.size() == 2)
@@ -642,6 +660,9 @@ void MyOs::rm(const vector<string>& args)
 
 void MyOs::rmFile(File* file, Directory* parentDir)
 {
+    cout << "here\n";
+    cout << file->getPath() << endl;
+    cout << parentDir->getPath() << endl;
     if (file->getType() == REGULAR_FILE)
         parentDir->removeFile(file);
     // else if (file->getType() == LINK)
@@ -699,26 +720,24 @@ void MyOs::updateDisk()
 
 void MyOs::ln(const vector<string >& args)
 {
-    string src = args[1];
-    string absolutePath = getAbsolutePath(src);
-    string parentDirPath = absolutePath.substr(0, absolutePath.find_last_of("/"));
-    if (parentDirPath.empty())
-        parentDirPath = "/";
-    File *file = getSpesificFile(absolutePath);
-    if (file == nullptr)
-        throw std::runtime_error(NO_SUCH_FILE);
-    Directory *parentDir = dynamic_cast<Directory *>(getSpesificFile(parentDirPath));
+    string absPathDest = getAbsolutePath(args[2]);
+    string destName = absPathDest.substr(absPathDest.find_last_of("/") + 1);
+    string destPath;
+    Directory *parentDir = getParentDir(args[2]);
     if (parentDir == nullptr)
         throw std::runtime_error(NO_SUCH_DIR);
-    string linkName = args[2];
-    string linkPath;
-    if (parentDirPath == "/")
-        linkPath = "/" + linkName;
+    if (parentDir->getPath() == "/")
+        destPath = "/" + destName;
     else
-        linkPath = parentDirPath + "/" + linkName;
-    if (parentDir->isDirContainFile(linkName))
+        destPath = parentDir->getPath() + "/" + destName;
+
+    File *file = getSpesificFile(args[1]);
+    cout << "pdir: " <<parentDir->getPath() << endl;
+    if (file == nullptr)
+        throw std::runtime_error(NO_SUCH_FILE);
+    if (parentDir->isDirContainFile(destName))
         throw std::runtime_error(CAN_NOT_LINK);
-    LinkedFile *link = new LinkedFile(linkName, linkPath, getDateAndTime(), file);
+    LinkedFile *link = new LinkedFile(destName, destPath, getDateAndTime(), file);
     parentDir->addFile(link);
     writeDisk(link);
 }
