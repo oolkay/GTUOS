@@ -4,6 +4,8 @@
 #include "File.hpp"
 #include <vector>
 
+using std::string;
+
 class Directory : public File
 {
     public:
@@ -14,7 +16,7 @@ class Directory : public File
         Directory(std::string name, std::string path, std::string lastModified);
 
         //SETTERS
-        void                        setFiles(std::vector<File *> files);
+        void                        setFiles(std::vector<File *> files, string lastModified);
         void                        setPrevDir(Directory* prevDir);
 
         //GETTERS

@@ -10,8 +10,10 @@
 #define NO_SUCH_DIR  "[ERROR] No such directory"
 #define DIR_EXIST    "[ERROR] Directory already exists"
 #define IS_DIR       "[ERROR] It is a directory"
+#define IS_NOT_DIR   "[ERROR] It is not a directory"
 #define NO_SUCH_FILE "[ERROR] No such file"
-#define SAME_FILE    "[ERROR] Source and destination are the same file"
+#define SAME_FILE    "[ERROR] The file is already exist"
+#define SAME_DIR     "[ERROR] You can not copy directory to itself"
 
 //NAMESPACE UNUTMA
 //ABSTRACT  UNUTMA
@@ -47,6 +49,7 @@ class File
         // virtual void        cd(const std::string& path);
 
         //OVERLOADING OPERATORS
+        bool               operator==(const File& other) const;
 
         //DESTRUCTOR
         virtual             ~File() = 0;

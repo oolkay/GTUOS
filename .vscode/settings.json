@@ -6,6 +6,10 @@
         "string_view": "cpp",
         "typeinfo": "cpp",
         "string": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "iosfwd": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp"
     }
 }

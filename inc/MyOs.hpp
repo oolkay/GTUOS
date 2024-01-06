@@ -18,6 +18,8 @@ using std::stringstream;
 #define UNKNOWN_CMD  "[ERROR] Command not found"
 #define MISSING_ARG  "[ERROR] Missing argument"
 #define EXTRA_ARG    "[ERROR] Too many arguments"
+#define CAN_NOT_REMOVE "[ERROR] You can not remove"
+#define CAN_NOT_LINK "[ERROR] The linked file is already exist"
 
 #define USER_NAME    "omer"
 #define HOST_NAME    "olkayOS"
@@ -94,13 +96,18 @@ class MyOs
         static void                    executeCommand(const vector<string>& args);
         static void                    freeTempMemory();
 
+        // LINK FUNCTIONS
+        static void                    ln(const vector<string >& args);
+
         // RM FUNCTIONS
-        static void                    rm(const string& path);
+        static void                    rm(const vector<string >& args);
+        static void                    rmFile(File* file, Directory* parentDir);
+        static void                    rmRecursive(File *file, Directory* parentDir);
 
         // DISK FUNCTIONS
         static void                    readDisk();
         static void                    writeDisk(File* data); //inyt döndürebilir
-        static void                    removeDataFromDisk(File* data);
+        static void                    updateDisk();
         static void                    loadDirectory(const string& name, const string& path, const string& lastModified);
         static void                    loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size);
         static void                    loadRegularFileContent(std::string& content, std::ifstream &file);

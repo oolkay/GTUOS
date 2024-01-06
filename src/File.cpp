@@ -73,3 +73,8 @@ File::~File()
     if (lastModified.empty() == false)
         lastModified.clear();
 }
+
+bool File::operator==(const File& other) const
+{
+    return (this->type == other.type && this->name == other.name && this->path == other.path);
+}

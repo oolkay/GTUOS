@@ -18,9 +18,24 @@ Directory::Directory(std::string name, std::string path, std::string lastModifie
     /*BURAYA BİR ŞEY GELEBİLİR*/
 }
 
-void Directory::setFiles(std::vector<File *> files)
+void Directory::setFiles(std::vector<File *> files, string lastModified)
 {
-    this->files = files;
+    //deep copy
+    for (auto file : files)
+    {
+        string name = file->getName();
+        string path = file->getPath();
+        if (file->getType() == REGULAR_FILE)
+        {
+            RegularFile *f = dynamic_cast<RegularFile *>(file);
+            this->files.push_back(new RegularFile(name, path, lastModified, 
+                        f->getContent(), f->getSize()));
+        }
+        else if (file->getType() == DIRECTORY)
+            this->files.push_back(new Directory(name, path, lastModified));
+        // else if (file->getType() == LINK)
+        //     this->files.push_back(new LinkedFile(*static_cast<LinkedFile *>(file)));
+    }
 }
 
 void Directory::setPrevDir(Directory* prevDir)
@@ -31,6 +46,8 @@ void Directory::setPrevDir(Directory* prevDir)
 void Directory::addFile(File *file)
 {
     files.push_back(file);
+    setLastModified(file->getLastModified());
+    findDirInCurrentByName(".")->setLastModified(file->getLastModified());
 }
 
 void Directory::removeFile(File *file)
@@ -39,7 +56,9 @@ void Directory::removeFile(File *file)
     {
         if (*it == file)
         {
+            cout << "File " << file->getName() << " removed" << endl;
             files.erase(it);
+            delete file;
             return ;
         }
     }
@@ -49,13 +68,15 @@ void Directory::ls() const
 {
     for (auto file : files)
     {
-        std::cout   << static_cast<char>(file->getType()) << " "
-                << file->getName() << "      "
-                << file->getLastModified();
-        if (file->getType() == REGULAR_FILE)
-            cout <<"     " << dynamic_cast<RegularFile *>(file)->getSize() << "Bytes" << endl;
+        if (file->getType() == REGULAR_FILE || file->getType() == LINK)
+            file->ls();
         else
-            cout << endl;
+        {
+            std::cout   << static_cast<char>(file->getType()) << " "
+                << file->getName() << "      "
+                << file->getLastModified() << std::endl;
+        }
+
     }
 }
 
@@ -124,6 +145,10 @@ std::ostream& operator<<(std::ostream& os, const Directory& dir)
 Directory::~Directory()
 {
     for (auto file : files)
+    {
         if (file != nullptr)
+        {
             delete file;
+        }
+    }
 }
