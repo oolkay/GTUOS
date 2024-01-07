@@ -72,7 +72,7 @@ void Directory::ls() const
             file->ls();
         else
         {
-            std::cout   << static_cast<char>(file->getType()) << " "
+            std::cout  << YELLOW << static_cast<char>(file->getType()) << DEFAULT << " "
                 << file->getName() << "      "
                 << file->getLastModified() << std::endl;
         }

@@ -15,24 +15,6 @@ using std::string;
 using std::vector;
 using std::stringstream;
 
-#define UNKNOWN_CMD  "[ERROR] Command not found"
-#define MISSING_ARG  "[ERROR] Missing argument"
-#define EXTRA_ARG    "[ERROR] Too many arguments"
-#define CAN_NOT_REMOVE "[ERROR] You can not remove"
-#define CAN_NOT_LINK "[ERROR] The linked file is already exist"
-
-#define USER_NAME    "omer"
-#define HOST_NAME    "olkayOS"
-
-#define DEFAULT "\033[0;39m"
-#define GRAY "\033[0;90m"
-#define RED "\033[0;91m"
-#define GREEN "\033[0;92m"
-#define YELLOW "\033[0;93m"
-#define BLUE "\033[0;94m"
-#define MAGENTA "\033[0;95m"
-#define CYAN "\033[0;96m"
-#define WHITE "\033[0;97m"
 
 // STATIC CLASS
 // NO OBJECT CREATION
@@ -89,6 +71,13 @@ class MyOs
         static void                    cd(const string& path);
         static void                    cdToGivenPath(const string& path);
 
+        // LS FUNCTIONS
+
+        static void                    ls(const vector<string >& args);
+
+        // CAT FUNCTIONS
+        static void                    cat(const vector<string >& args);
+
         // OS FUNCTIONS
 
         static void                    init();
@@ -108,11 +97,13 @@ class MyOs
         // DISK FUNCTIONS
         static void                    readDisk();
         static void                    writeDisk(File* data); //inyt döndürebilir
-        static void                    updateDisk();
+        static void                    updateDisk(std::ofstream& ofs);
+        static void                    updateDiskHelper();
+        static void                    updateTheLinks();
         static void                    loadDirectory(const string& name, const string& path, const string& lastModified);
         static void                    loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size);
         static void                    loadRegularFileContent(std::string& content, std::ifstream &file);
-        static void                    loadLinkedFile(const string& name, const string& path, const string& lastModified, const string& linkedFile);
+        static void                    loadLinkedFile(const string& name, const string& path, const string& lastModified, File* linkedFile);
 
     private:
         static Directory*                  curDir;

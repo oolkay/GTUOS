@@ -3,7 +3,6 @@
 
 #include "File.hpp"
 
-#define NO_LINK "The linked file is not exist"
 
 class LinkedFile : public File
 {
@@ -21,13 +20,20 @@ class LinkedFile : public File
 
         //GETTERS
         inline File*            getLinkedFile() const {return linkedFile;}
+        inline std::string      getLinkedFileName() const {return linkedFileName;}
+        inline std::string      getLinkedFilePath() const {return linkedFilePath;}
+        
+        // OPERATOR OVERLOADINGS
+        friend std::ostream&    operator<<(std::ostream& os, const LinkedFile& file);
 
         //ls FUNCTION
         void                    ls() const override;
         void                    cat() const override;
 
     private:
-        File* linkedFile;
+        File*       linkedFile;
+        std::string linkedFileName;
+        std::string linkedFilePath;
 };
 
 #endif

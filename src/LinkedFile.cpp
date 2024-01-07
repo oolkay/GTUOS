@@ -13,16 +13,19 @@ using std::string;
 LinkedFile::LinkedFile(std::string name, std::string path, std::string lastModified, File* linkedFile): File(LINK, name, path, lastModified)
 {
     this->linkedFile = linkedFile;
+    if (linkedFile != nullptr)
+    {
+        this->linkedFileName = linkedFile->getName();
+        this->linkedFilePath = linkedFile->getPath();
+    }
 }
 
 void LinkedFile::ls() const
 {
-    string linkName;
-    if (this->linkedFile != nullptr)
-        linkName = linkedFile->getName();
-    std::cout   << static_cast<char>(type) << " "
-                << name+"->"+linkName << "      "
-                << lastModified << "  " << std::endl;
+    std::cout   << BLUE << static_cast<char>(type) << DEFAULT << " "
+                << name << "      "
+                << lastModified << "  " << BLUE << name << WHITE << "->" << RED  << linkedFilePath
+                    << DEFAULT << std::endl;
 }
 
 void LinkedFile::cat() const
@@ -35,7 +38,18 @@ void LinkedFile::cat() const
         linkedFile->cat();
 }
 
+std::ostream& operator<<(std::ostream& os, const LinkedFile& file)
+{
+    string link = file.name + "->" + file.linkedFilePath;
+    os  << static_cast<char>(file.type) << " "
+        << file.name << " " << file.path << " "
+        << file.lastModified << " " << link;
+    return os;
+}
+
 LinkedFile::~LinkedFile()
 {
     linkedFile = nullptr;
+    linkedFileName.clear();
+    linkedFilePath.clear();
 }

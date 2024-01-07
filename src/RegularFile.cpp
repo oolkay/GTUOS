@@ -39,7 +39,7 @@ std::ostream& operator<<(std::ostream& os, const RegularFile& regFile)
 
 void RegularFile::ls() const
 {
-    std::cout   << static_cast<char>(type) << " "
+    std::cout   << GREEN << static_cast<char>(type) << DEFAULT << " "
                 << name << "      "
                 << lastModified << "  "
                 << size << "Bytes" << std::endl;

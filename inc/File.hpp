@@ -3,17 +3,7 @@
 
 #include <string>
 #include <time.h>
-
-#define REGULAR_FILE 'F'
-#define LINK         'L'
-#define DIRECTORY    'D'
-#define NO_SUCH_DIR  "[ERROR] No such directory"
-#define DIR_EXIST    "[ERROR] Directory already exists"
-#define IS_DIR       "[ERROR] It is a directory"
-#define IS_NOT_DIR   "[ERROR] It is not a directory"
-#define NO_SUCH_FILE "[ERROR] No such file"
-#define SAME_FILE    "[ERROR] The file is already exist"
-#define SAME_DIR     "[ERROR] You can not copy directory to itself"
+#include "Defines.hpp"
 
 //NAMESPACE UNUTMA
 //ABSTRACT  UNUTMA
