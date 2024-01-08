@@ -13,10 +13,12 @@ class Directory : public File
         Directory() = delete; //My design does not allow to use default constructor
 
         //COPY CONSTRUCTOR
-        Directory(const Directory& other); //My design does not allow to use copy constructor
+        Directory(const Directory& other);
+
+
 
         //= OPERATOR OVERLOAD
-        Directory&                  operator=(const Directory& other); //My design does not allow to use = operator
+        Directory&                  operator=(const Directory& other); 
 
         //PARAMETERIZED CONSTRUCTOR
         Directory(std::string name, std::string path, std::string lastModified);

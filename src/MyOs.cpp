@@ -199,6 +199,8 @@ Directory* MyOs::getParentDir(const string& path)
         parentDirPath = "/";
     Directory *tmpCur = curDir;
     cd(parentDirPath);
+    if (absPath.substr(absPath.find_last_of("/") + 1) == "..")
+        cd("..");
     Directory *parentDir = curDir;
     curDir = tmpCur;
     return parentDir;
@@ -318,40 +320,41 @@ void MyOs::cpFileFromMyOs(const string& src, const string& destName)
     string path;
     string content;
     File *file  = getSpesificFile(src);
-    cout << destName << endl;
     if (file == nullptr)
         throw std::runtime_error(NO_DIR_FILE);
     if (curDir->isDirContainFile(destName))
         throw std::runtime_error(SAME_FILE);
     if (curDir == file)
         throw std::runtime_error(SAME_DIR);
-    generateCopyFile(file, destName);
+    generateCopyFile(file, curDir, destName);
 }
 
 //CREATES A COPY OF THE GIVEN FILE
 template<class T>
-T* MyOs::createCopyFile(T* src)
+T* MyOs::createCopyFile(T* src, Directory* curDir, const string& destName)
 {
     T* copyFile = new T(dynamic_cast<T&>(*src));
     copyFile->setLastModified(getDateAndTime());
     if (curDir->getPath() == "/")
-        copyFile->setPath("/" + copyFile->getName());
+        copyFile->setPath("/" + destName);
     else
-        copyFile->setPath(curDir->getPath() + "/" + copyFile->getName());
+        copyFile->setPath(curDir->getPath() + "/" + destName);
     return copyFile;
 }
 
 //CREATES, ADDS AND WRITES THE COPY FILE TO THE DISK
-void MyOs::generateCopyFile(File *src, const string& destName)
+void MyOs::generateCopyFile(File *src, Directory* curDir, const string& destName)
 {
+    bool flag = 1;
     File *cpy = nullptr;
     if (src->getType() == REGULAR_FILE)
-        cpy = createCopyFile<RegularFile>(dynamic_cast<RegularFile *>(src));
+        cpy = createCopyFile<RegularFile>(dynamic_cast<RegularFile *>(src), curDir, destName);
     else if (src->getType() == LINK)
-        cpy = createCopyFile<LinkedFile>(dynamic_cast<LinkedFile *>(src));
+        cpy = createCopyFile<LinkedFile>(dynamic_cast<LinkedFile *>(src), curDir, destName);
     else if (src->getType() == DIRECTORY)
     {
-        cpy = createCopyFile<Directory>(dynamic_cast<Directory *>(src));
+        flag = 0;
+        cpy = cpDirRecursive(dynamic_cast<Directory *>(src), curDir, destName);
         dynamic_cast<Directory *>(cpy)->setPrevDir(curDir);
     }
     if (cpy != nullptr)
@@ -359,7 +362,31 @@ void MyOs::generateCopyFile(File *src, const string& destName)
         cpy->setName(destName);
         curDir->addFile(cpy);
     }
-    writeDisk(cpy);
+    if (flag)
+        writeDisk(cpy);
+}
+
+Directory* MyOs::cpDirRecursive(Directory *dir, Directory *prevDir, const string& destName)
+{
+    string path;
+    if (prevDir->getPath() == "/")
+        path = "/" + destName;
+    else
+        path = prevDir->getPath() + "/" + destName;
+    Directory *newDir = new Directory(destName, path, getDateAndTime());
+    newDir->setPrevDir(prevDir);
+    writeDisk(newDir);
+    vector<File *> files = dir->getFiles();
+    for (const auto& file : files)
+    {
+        if (file->getType() == REGULAR_FILE)
+            generateCopyFile(file, newDir, file->getName());
+        else if (file->getType() == DIRECTORY)
+            newDir->addFile(cpDirRecursive(dynamic_cast<Directory *>(file), newDir, file->getName()));
+        else if (file->getType() == LINK)
+            generateCopyFile(file, newDir, file->getName());
+    }
+    return newDir;
 }
 
 // COPY THE FILE FROM REGULAR OS TO MY OS(CURRENT DIR)
@@ -412,9 +439,10 @@ void MyOs::cp(const string& src, const string& dest)
     string destName = destPath.substr(destPath.find_last_of("/") + 1);
     if (destName.empty())
         destName = src.substr(src.find_last_of("/") + 1);
-    cout << src.substr(src.find_last_of("/") + 1) << endl;
-    if (destName == ".")
+    if (destName == "." || destName == "..")
         destName = src.substr(src.find_last_of("/") + 1);
+    if (destName == "/")
+        throw std::runtime_error(INVALID_DEST);
     if (isFileExistInRegOs(src) == true)
     {
         if (curDir->isDirContainFile(destName))
@@ -646,6 +674,8 @@ void MyOs::rm(const vector<string>& args)
         throw std::runtime_error(CAN_NOT_REMOVE);
     Directory* parentDir = getParentDir(absolutePath);
     File *file = getSpesificFile(absolutePath);
+    // if (parentDir == curDir)
+    //     throw std::runtime_error(RM_CUR_DIR);
     if (file == nullptr)
         throw std::runtime_error(NO_DIR_FILE);
     if (file->getType() == REGULAR_FILE || file->getType() == LINK)

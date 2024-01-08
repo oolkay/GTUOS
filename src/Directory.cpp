@@ -20,11 +20,13 @@ Directory::Directory(const Directory& other): File(other)
     {
         string name = file->getName();
         string path = file->getPath();
-        string lastModified = file->getLastModified();
         if (file->getType() == REGULAR_FILE)
             this->files.push_back(new RegularFile(*static_cast<RegularFile *>(file)));
         else if (file->getType() == DIRECTORY)
-            this->files.push_back(new Directory(name, path, lastModified));
+        {
+            Directory *dir = static_cast<Directory *>(file);
+            this->files.push_back(new Directory(*dir));
+        }
         else if (file->getType() == LINK)
             this->files.push_back(new LinkedFile(*static_cast<LinkedFile *>(file)));
     }

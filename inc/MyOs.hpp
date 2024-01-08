@@ -62,9 +62,10 @@ class MyOs
         static void                    cp(const string& src, const string& dest);
         static void                    cpFileFromMyOs(const string& src, const string& destName);
         template<class T>
-        static T*                      createCopyFile(T* src);
-        static void                    generateCopyFile(File *src, const string& destName);
+        static T*                      createCopyFile(T* src, Directory *prevDir, const string& destName);
+        static void                    generateCopyFile(File *src, Directory *prevDir, const string& destName);
         static void                    cpFileFromRegularOs(const string& src, const string& destName);//throws NO_SUCH_FILE
+        static Directory*              cpDirRecursive(Directory *dir, Directory *prevDir, const string& destName);
 
         //MKDIR FUNCTIONS
 

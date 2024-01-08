@@ -7,11 +7,22 @@ using std::string;
 
 LinkedFile::LinkedFile(std::string name, std::string path, std::string lastModified, File* linkedFile): File(LINK, name, path, lastModified)
 {
-    this->linkedFile = linkedFile;
-    if (linkedFile != nullptr)
+    if (linkedFile->getType() == LINK)
     {
+        LinkedFile *link = static_cast<LinkedFile *>(linkedFile);
+        this->linkedFile = link->getLinkedFile();
+        this->linkedFileName = link->getLinkedFileName();
+        this->linkedFilePath = link->getLinkedFilePath();
+    }
+    else if (linkedFile->getType() == REGULAR_FILE || linkedFile->getType() == DIRECTORY)
+    {
+        this->linkedFile = linkedFile;
         this->linkedFileName = linkedFile->getName();
         this->linkedFilePath = linkedFile->getPath();
+    }
+    else
+    {
+        this->linkedFile = nullptr;
     }
 }
 

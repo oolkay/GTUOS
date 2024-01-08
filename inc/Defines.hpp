@@ -26,6 +26,8 @@
 #define NO_LINK "[ERROR] The file that being linked is not exist"
 #define ONLY_CUR "[ERROR] You can only copy to current directory"
 #define NO_DIR_FILE "[ERROR] No such directory or file"
+#define INVALID_DEST "[ERROR] Invalid dest name"
+#define RM_CUR_DIR "[ERROR] You can not remove current directory"
 
 #define DEFAULT "\033[0;39m"
 #define GRAY "\033[0;90m"

@@ -1,0 +1,27 @@
+D / / Jan 08 22:31
+D a /a Jan 08 22:31
+F a.c /a/a.c Jan 08 22:34 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%

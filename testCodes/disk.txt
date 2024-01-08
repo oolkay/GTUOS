@@ -1,15 +1,12 @@
-D / / Jan 08 20:15
-D home /home Jan 08 13:03
-D omer /home/omer Jan 08 13:01
-D t /home/t Jan 08 13:03
-D omer /home/t/omer Jan 08 13:03
-D omer /omer Jan 08 13:02
-D a /omer/a Jan 08 13:02
-D b /omer/b Jan 08 13:02
-D c /omer/c Jan 08 13:02
-D f /f Jan 08 20:10
-D a /f/a Jan 08 19:32
-F . /f/z Jan 08 20:09 297Bytes
+D / / Jan 08 23:38
+D dir0 /dir0 Jan 08 22:59
+F berkay /dir0/berkay Jan 08 22:58 39Bytes
+%
+D / / Jan 08 22:33
+D a /a Jan 08 22:33
+
+%
+F omer /dir0/omer Jan 08 22:58 297Bytes
 %
 #include <stdio.h>
 
@@ -34,7 +31,8 @@ int main()
     return (0);
 }
 %
-F z /f/z Jan 08 20:10 297Bytes
+D a /dir0/a Jan 08 22:58
+F omer /dir0/a/omer Jan 08 22:58 297Bytes
 %
 #include <stdio.h>
 
@@ -59,7 +57,26 @@ int main()
     return (0);
 }
 %
-F a.c /a.c Jan 08 19:31 297Bytes
+D b /dir0/b Jan 08 22:59
+F berkay /dir0/b/berkay Jan 08 22:59 39Bytes
+%
+D / / Jan 08 22:33
+D a /a Jan 08 22:33
+
+%
+D c /dir0/c Jan 08 22:59
+D q /dir0/c/q Jan 08 22:59
+D f /dir0/c/q/f Jan 08 22:59
+D w /dir0/c/w Jan 08 22:59
+D e /dir0/c/e Jan 08 22:59
+D dir1 /dir1 Jan 08 23:34
+F berkay /dir1/berkay Jan 08 23:34 39Bytes
+%
+D / / Jan 08 22:33
+D a /a Jan 08 22:33
+
+%
+F omer /dir1/omer Jan 08 23:34 297Bytes
 %
 #include <stdio.h>
 
@@ -84,7 +101,8 @@ int main()
     return (0);
 }
 %
-F poo /poo Jan 08 19:57 297Bytes
+D a /dir1/a Jan 08 23:34
+F omer /dir1/a/omer Jan 08 23:34 297Bytes
 %
 #include <stdio.h>
 
@@ -109,180 +127,15 @@ int main()
     return (0);
 }
 %
-F trtrtrtr /trtrtrtr Jan 08 19:58 297Bytes
+D b /dir1/b Jan 08 23:34
+F berkay /dir1/b/berkay Jan 08 23:34 39Bytes
 %
-#include <stdio.h>
+D / / Jan 08 22:33
+D a /a Jan 08 22:33
 
-void func(double nbr)
-{
-    int nominator = 0;
-    int denominator = 1;
-    while ((int)nbr != nbr)
-    {
-        nbr *= 10;
-        denominator *= 10;
-    }
-    nominator = nbr;
-    printf("%d/%d\n", nominator, denominator);
-}
-
-int main()
-{
-
-    func(3.14);
-
-    return (0);
-}
 %
-F r /r Jan 08 19:58 297Bytes
-%
-#include <stdio.h>
-
-void func(double nbr)
-{
-    int nominator = 0;
-    int denominator = 1;
-    while ((int)nbr != nbr)
-    {
-        nbr *= 10;
-        denominator *= 10;
-    }
-    nominator = nbr;
-    printf("%d/%d\n", nominator, denominator);
-}
-
-int main()
-{
-
-    func(3.14);
-
-    return (0);
-}
-%
-F asdasd /z Jan 08 20:02 297Bytes
-%
-#include <stdio.h>
-
-void func(double nbr)
-{
-    int nominator = 0;
-    int denominator = 1;
-    while ((int)nbr != nbr)
-    {
-        nbr *= 10;
-        denominator *= 10;
-    }
-    nominator = nbr;
-    printf("%d/%d\n", nominator, denominator);
-}
-
-int main()
-{
-
-    func(3.14);
-
-    return (0);
-}
-%
-D . /b Jan 08 20:03
-F t /asdasd Jan 08 20:04 297Bytes
-%
-#include <stdio.h>
-
-void func(double nbr)
-{
-    int nominator = 0;
-    int denominator = 1;
-    while ((int)nbr != nbr)
-    {
-        nbr *= 10;
-        denominator *= 10;
-    }
-    nominator = nbr;
-    printf("%d/%d\n", nominator, denominator);
-}
-
-int main()
-{
-
-    func(3.14);
-
-    return (0);
-}
-%
-L zzz /zzz Jan 08 20:06 zzz->/z
-F polis /hh Jan 08 20:13 297Bytes
-%
-#include <stdio.h>
-
-void func(double nbr)
-{
-    int nominator = 0;
-    int denominator = 1;
-    while ((int)nbr != nbr)
-    {
-        nbr *= 10;
-        denominator *= 10;
-    }
-    nominator = nbr;
-    printf("%d/%d\n", nominator, denominator);
-}
-
-int main()
-{
-
-    func(3.14);
-
-    return (0);
-}
-%
-F .. /polis Jan 08 20:22 297Bytes
-%
-#include <stdio.h>
-
-void func(double nbr)
-{
-    int nominator = 0;
-    int denominator = 1;
-    while ((int)nbr != nbr)
-    {
-        nbr *= 10;
-        denominator *= 10;
-    }
-    nominator = nbr;
-    printf("%d/%d\n", nominator, denominator);
-}
-
-int main()
-{
-
-    func(3.14);
-
-    return (0);
-}
-%
-F iiiii /polis Jan 08 20:32 297Bytes
-%
-#include <stdio.h>
-
-void func(double nbr)
-{
-    int nominator = 0;
-    int denominator = 1;
-    while ((int)nbr != nbr)
-    {
-        nbr *= 10;
-        denominator *= 10;
-    }
-    nominator = nbr;
-    printf("%d/%d\n", nominator, denominator);
-}
-
-int main()
-{
-
-    func(3.14);
-
-    return (0);
-}
-%
+D c /dir1/c Jan 08 23:34
+D q /dir1/c/q Jan 08 23:34
+D f /dir1/c/q/f Jan 08 23:34
+D w /dir1/c/w Jan 08 23:34
+D e /dir1/c/e Jan 08 23:34
