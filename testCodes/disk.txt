@@ -236,3 +236,28 @@ int main()
     return (0);
 }
 %
+F .. /polis Jan 08 20:22 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
