@@ -1,7 +1,0 @@
-D / / Jan 07 16:57
-D home /home Jan 07 16:57
-D desktop /home/desktop Jan 07 16:57
-D omer /home/desktop/omer Jan 07 17:01
-D d /home/desktop/omer/d Jan 07 17:01
-D a /home/desktop/omer/d/a Jan 07 17:01
-L f /home/desktop/omer/f Jan 07 17:01 f->/home/desktop/omer/d/a.c
