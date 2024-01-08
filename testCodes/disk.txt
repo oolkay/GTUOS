@@ -1,0 +1,238 @@
+D / / Jan 08 20:15
+D home /home Jan 08 13:03
+D omer /home/omer Jan 08 13:01
+D t /home/t Jan 08 13:03
+D omer /home/t/omer Jan 08 13:03
+D omer /omer Jan 08 13:02
+D a /omer/a Jan 08 13:02
+D b /omer/b Jan 08 13:02
+D c /omer/c Jan 08 13:02
+D f /f Jan 08 20:10
+D a /f/a Jan 08 19:32
+F . /f/z Jan 08 20:09 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+F z /f/z Jan 08 20:10 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+F a.c /a.c Jan 08 19:31 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+F poo /poo Jan 08 19:57 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+F trtrtrtr /trtrtrtr Jan 08 19:58 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+F r /r Jan 08 19:58 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+F asdasd /z Jan 08 20:02 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+D . /b Jan 08 20:03
+F t /asdasd Jan 08 20:04 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
+L zzz /zzz Jan 08 20:06 zzz->/z
+F polis /hh Jan 08 20:13 297Bytes
+%
+#include <stdio.h>
+
+void func(double nbr)
+{
+    int nominator = 0;
+    int denominator = 1;
+    while ((int)nbr != nbr)
+    {
+        nbr *= 10;
+        denominator *= 10;
+    }
+    nominator = nbr;
+    printf("%d/%d\n", nominator, denominator);
+}
+
+int main()
+{
+
+    func(3.14);
+
+    return (0);
+}
+%
