@@ -1,7 +1,7 @@
 SRCDIR = ../src
 OBJDIR = ../obj
 LIBDIR = ../lib
-CC 	   = c++
+CC 	   = g++
 CFLAGS = -Wall -Werror -Wextra -std=c++11
 
 all:
