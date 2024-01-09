@@ -39,9 +39,8 @@ namespace FileSystem
 
 
             //FILE FUNCTIONS
-            virtual void        ls() const; //pure virtual?
-            virtual void        cat() const; //iterator kullanilabilir
-            // virtual void        cd(const std::string& path);
+            virtual void        ls() const;
+            virtual void        cat() const;
 
             //OVERLOADING OPERATORS
             bool               operator==(const File& other) const;

@@ -16,7 +16,7 @@ namespace FileSystem
 
     Directory::Directory(const Directory& other): File(other)
     {
-        //deep copy
+        //deep copy, recursively
         for (auto file : other.files)
         {
             string name = file->getName();
@@ -30,26 +30,6 @@ namespace FileSystem
             }
             else if (file->getType() == LINK)
                 this->files.push_back(new LinkedFile(*static_cast<LinkedFile *>(file)));
-        }
-    }
-
-    void Directory::setFiles(std::vector<File *> files, string lastModified)
-    {
-        //deep copy
-        for (auto file : files)
-        {
-            string name = file->getName();
-            string path = file->getPath();
-            if (file->getType() == REGULAR_FILE)
-            {
-                RegularFile *f = dynamic_cast<RegularFile *>(file);
-                this->files.push_back(new RegularFile(name, path, lastModified, 
-                            f->getContent(), f->getSize()));
-            }
-            else if (file->getType() == DIRECTORY)
-                this->files.push_back(new Directory(name, path, lastModified));
-            // else if (file->getType() == LINK)
-            //     this->files.push_back(new LinkedFile(*static_cast<LinkedFile *>(file)));
         }
     }
 
@@ -72,7 +52,6 @@ namespace FileSystem
         {
             if (*it == file)
             {
-                cout << "File " << file->getName() << " removed" << endl;
                 files.erase(it);
                 delete file;
                 return ;
@@ -102,11 +81,6 @@ namespace FileSystem
                     << file->getName() << DEFAULT << "      "
                     << CYAN << file->getLastModified() << std::endl;
             }
-        }
-        if (prevDir != nullptr)
-        {
-            cout << prevDir->getPath() << ">";
-            cout << prevDir->getName() << endl;
         }
     }
 

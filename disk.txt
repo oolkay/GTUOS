@@ -1,6 +1,9 @@
-D / / Jan 08 22:31
-D a /a Jan 08 22:31
-F a.c /a/a.c Jan 08 22:34 297Bytes
+D / / Jan 09 21:21
+D home /home Jan 09 21:21
+D omer /home/omer Jan 09 21:21
+D desktop /home/omer/desktop Jan 09 21:22
+D gtu /home/omer/desktop/gtu Jan 09 21:29
+F a.c /home/omer/desktop/gtu/a.c Jan 09 21:22 297Bytes
 %
 #include <stdio.h>
 
@@ -25,3 +28,5 @@ int main()
     return (0);
 }
 %
+D downloads /home/omer/downloads Jan 09 21:21
+D documents /home/omer/documents Jan 09 21:21

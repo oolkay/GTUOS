@@ -20,13 +20,12 @@ namespace FileSystem
 
 
             //= OPERATOR OVERLOAD
-            Directory&                  operator=(const Directory& other); 
+            Directory&                  operator=(const Directory& other) = delete;  //My design does not allow to use default constructor
 
             //PARAMETERIZED CONSTRUCTOR
             Directory(std::string name, std::string path, std::string lastModified);
 
             //SETTERS
-            void                        setFiles(std::vector<File *> files, string lastModified);
             void                        setPrevDir(Directory* prevDir);
 
             //GETTERS
@@ -50,6 +49,54 @@ namespace FileSystem
             Directory*                  findDirInCurrentByName(const std::string& name);
             bool                        isDirContainFile(const std::string& name) const;
 
+            //ITERATOR FUNCTIONS
+            class Iterator
+            {
+                public:
+                    Iterator(std::vector<File *>::iterator iterator) : current(iterator) {}
+
+                    Iterator& operator++()
+                    {
+                        ++current;
+                        return *this;
+                    }
+
+                    Iterator operator++(int)
+                    {
+                        Iterator tmp = *this;
+                        ++current;
+                        return tmp;
+                    }
+
+                    bool operator==(const Iterator& other) const
+                    {
+                        return current == other.current;
+                    }
+
+                    bool operator!=(const Iterator& other) const
+                    {
+                        return current != other.current;
+                    }
+
+                    File* operator*() const
+                    {
+                        return *current;
+                    }
+
+                private:
+                    std::vector<File*>::iterator current;
+            };
+
+            // BEGIN ve END fonksiyonları, başlangıç ve bitiş iterator'larını döndürmek için kullanılabilir.
+            Iterator begin()
+            {
+                return Iterator(files.begin());
+            }
+
+            Iterator end()
+            {
+                return Iterator(files.end());
+            }
 
 
             //DESTRUCTOR

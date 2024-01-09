@@ -13,10 +13,10 @@ namespace FileSystem
             LinkedFile() = delete; //My design does not allow to use default constructor
 
             //COPY CONSTRUCTOR
-            LinkedFile(const LinkedFile& other); //My design does not allow to use copy constructor
+            LinkedFile(const LinkedFile& other);
 
             //= OPERATOR OVERLOAD
-            LinkedFile&             operator=(const LinkedFile& other) = default; //My design does not allow to use = operator
+            LinkedFile&             operator=(const LinkedFile& other) = default; //DEFAULT IS ENOUGH
             
             ~LinkedFile();
 

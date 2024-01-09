@@ -32,6 +32,7 @@
 #define RM_CUR_DIR "[ERROR] You can not remove current directory"
 #define DISK_FULL "[ERROR] Operation cancelled, there is no enough space in disk"
 #define DISK_NAME "disk.txt"
+#define INVALID_DIR_NAME "[ERROR] Invalid directory name"
 #define CAN_NOT_OPEN_DISK "[ERROR] Can not open disk"
 #define NULLDATA "[ERROR] Null data"
 

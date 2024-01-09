@@ -15,7 +15,7 @@ namespace FileSystem
             RegularFile(const RegularFile& other) = default; //default is enough
 
             //= OPERATOR OVERLOAD
-            RegularFile&            operator=(const RegularFile& other); //default is enough
+            RegularFile&            operator=(const RegularFile& other) = delete; //My design does not allow to use = operator
 
             //PARAMETERIZED CONSTRUCTOR
             // lastModified default olarak alinabilir kendi halledebilir içeride
@@ -35,6 +35,54 @@ namespace FileSystem
             //FILE FUNCTIONS
             void                    ls() const override;
             void                    cat() const override;
+
+            //ITERATOR FUNCTIONS
+            class Iterator
+                {
+                public:
+                    Iterator(std::string::iterator iterator) : current(iterator) {}
+
+                    Iterator& operator++()
+                    {
+                        ++current;
+                        return *this;
+                    }
+
+                    Iterator operator++(int)
+                    {
+                        Iterator tmp = *this;
+                        ++current;
+                        return tmp;
+                    }
+
+                    bool operator==(const Iterator& other) const
+                    {
+                        return current == other.current;
+                    }
+
+                    bool operator!=(const Iterator& other) const
+                    {
+                        return current != other.current;
+                    }
+
+                    char operator*() const
+                    {
+                        return *current;
+                    }
+
+                private:
+                    std::string::iterator current;
+                };
+
+            Iterator begin()
+            {
+                return Iterator(content.begin());
+            }
+
+            Iterator end()
+            {
+                return Iterator(content.end());
+            }
 
             //DESTRUCTOR
             ~RegularFile();

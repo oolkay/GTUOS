@@ -21,10 +21,10 @@ namespace OlkayOS
     class MyOs
     {
         public:
-            MyOs() = delete;
-            ~MyOs() = delete;
-            MyOs(const MyOs& other) = delete;
-            MyOs& operator=(const MyOs& other) = delete;
+            MyOs() = delete; // NO OBJECT CREATION
+            ~MyOs() = delete; // NO OBJECT CREATION
+            MyOs(const MyOs& other) = delete; // NO OBJECT CREATION
+            MyOs& operator=(const MyOs& other) = delete; // NO OBJECT CREATION
             
 
             //GETTERS
@@ -46,7 +46,8 @@ namespace OlkayOS
 
             //FILE FUNCTIONS
 
-            static char                    isFileExistInMyOs(const string& path); //bir de bu
+            static char                    isFileExistInMyOs(const string& path);
+            static bool                    isFileExistInDisk(const string& path);
             static bool                    isFileExistInRegOs(const string& path);
             static File*                   getSpesificFile(const string& path);
             static Directory*              getCurrentDir();
@@ -101,7 +102,7 @@ namespace OlkayOS
 
             // DISK FUNCTIONS
             static void                    readDisk();
-            static void                    writeDisk(File* data); //inyt döndürebilir
+            static void                    writeDisk(File* data);
             static void                    updateDisk(std::ofstream& ofs, Directory* curDir);
             static void                    updateDiskHelper();
             static void                    updateTheLinks(const Directory* dir);

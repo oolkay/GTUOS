@@ -25,14 +25,17 @@ namespace OlkayOS
     Directory* MyOs::curDir = nullptr;
     size_t     MyOs::diskSize = 0;
 
+    // INITIALIZES THE OS BY READING THE DISK
     void MyOs::init()
     {
         try
         {
             readDisk();
+            //IF DISK IS EMPTY
             if (rootDir == nullptr)
             {
                 rootDir = new Directory("/", "/", getDateAndTime());
+                diskSize += DIR_SIZE;
                 rootDir->setPrevDir(nullptr);
                 writeDisk(rootDir);
             }
@@ -48,6 +51,7 @@ namespace OlkayOS
 
     }
 
+    // FREE THE TEMPORARY MEMORY
     void MyOs::freeTempMemory()
     {
         if (rootDir != nullptr)
@@ -139,6 +143,7 @@ namespace OlkayOS
         return args;
     }
 
+    // SPLITS THE PATH BY DELIMETER
     vector<string> MyOs::splitPath(const string& path, char delimeter)
     {
         vector<string>  paths;
@@ -196,6 +201,8 @@ namespace OlkayOS
             return curDir->getPath() + "/" + relativePath;
     }
 
+    // Returns the parent directory of the given path
+    // /home/omer/a.c -> /home/omer
     Directory* MyOs::getParentDir(const string& path)
     {
         string absPath = getAbsolutePath(path);
@@ -225,6 +232,7 @@ namespace OlkayOS
             cdToGivenPath(path);
     }
 
+    // Changes the current directory to the given path
     void MyOs::cdToGivenPath(const string& path)
     {
         //a/b/c -> a   b   c
@@ -258,11 +266,45 @@ namespace OlkayOS
                 else
                 {
                     curDir = tmpDirCur;
-                    cout << "asdasd\n";
                     throw std::invalid_argument(IS_NOT_DIR);
                 }
             }
         }
+    }
+
+    // CHECKS WHETHER THE FILE EXIST IN THE DISK OR NOT
+    bool MyOs::isFileExistInDisk(const string& path)
+    {
+        std::ifstream   ifs;
+        string absPath = getAbsolutePath(path);
+        string line;
+        ifs.open(DISK_NAME);
+        if (ifs.good())
+        {
+            while (getline(ifs, line))
+            {
+                if (line[0] == '%')
+                {
+                    while (getline(ifs, line))
+                    {
+                        if (line[0] == '%')
+                            break;
+                    }
+                }
+                else
+                {
+                    vector<string > properties = parseInput(line);
+                    string filePath = properties[2];
+                    if (filePath == absPath)
+                    {
+                        ifs.close();
+                        return true;
+                    }
+                }
+            }
+        }
+        ifs.close();
+        return false;
     }
 
     //Checks whether the file exist in my os or not
@@ -372,6 +414,7 @@ namespace OlkayOS
             writeDisk(cpy);
     }
 
+    // RECURSIVE FUNCTION FOR COPYING THE DIRECTORY
     Directory* MyOs::cpDirRecursive(Directory *dir, Directory *prevDir, const string& destName)
     {
         string path;
@@ -463,9 +506,10 @@ namespace OlkayOS
             else
                 throw::std::runtime_error(NO_DIR_FILE);
         }
+        updateTheLinks(rootDir);
     }
 
-
+    //calls the ls functions of the directory(virtual)
     void MyOs::ls(const vector<string>& args)
     {
         if (args.size() > 1 && args[1] == "-R")
@@ -474,6 +518,7 @@ namespace OlkayOS
             curDir->ls();
     }
 
+    //calls the cat functions of the file(virtual)
     void MyOs::cat(const vector<string>& args)
     {
         string fileToCat = args[1];
@@ -500,14 +545,13 @@ namespace OlkayOS
 
     string MyOs::getDateAndTime()
     {
-        // Şu anki zamanı elde et
+        // Şu anki zaman
         auto current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
-        // C tarih yapısına dönüştür
         struct tm* time_info = std::localtime(&current_time);
 
-        // Tarih ve saat bilgisini bir string olarak oluştur
-        char buffer[20]; // "AY GÜN SAAT\0" için yeterli boyutta bir buffer
+        // stringe dönüştürme
+        char buffer[20]; // "AY GÜN SAAT\0" icin buffer
         std::strftime(buffer, sizeof(buffer), "%b %d %H:%M", time_info);
 
         return std::string(buffer);
@@ -515,22 +559,26 @@ namespace OlkayOS
 
     void MyOs::mkdir(const string& arg)
     {
-        string  absolutePath;
-        if (curDir->getPath() == "/")
-            absolutePath = curDir->getPath() + arg;
-        else
-            absolutePath = curDir->getPath() + "/" + arg;
+        string  absolutePath = getAbsolutePath(arg);
+        string  fileName = absolutePath.substr(absolutePath.find_last_of("/") + 1);
+        Directory *parentDir = getParentDir(absolutePath);
+        if (fileName.empty() || fileName == "." || fileName == ".." || fileName == "/")
+            throw std::runtime_error(INVALID_DIR_NAME);
         if (isFileExistInMyOs(absolutePath))
             throw std::runtime_error(DIR_EXIST);
-        Directory *newDir = new Directory(arg, absolutePath, getDateAndTime());
-        newDir->setPrevDir(curDir);
-        curDir->addFile(newDir);
-        curDir->setLastModified(getDateAndTime());
-        MyOs::diskSize += DIR_SIZE;
+        if (parentDir->getPath() == "/")
+            absolutePath = "/" + fileName;
+        else
+            absolutePath = parentDir->getPath() + "/" + fileName;
+        Directory *newDir = new Directory(fileName, absolutePath, getDateAndTime());
+        newDir->setPrevDir(parentDir);
+        parentDir->addFile(newDir);
+        parentDir->setLastModified(getDateAndTime());
         writeDisk(newDir);
+        updateTheLinks(rootDir);
     }
 
-
+    // READS THE DISK.TXT AND LOADS THE FILES TO THE OS
     void MyOs::readDisk()
     {
         ifstream    disk;
@@ -559,17 +607,20 @@ namespace OlkayOS
                         string content;
                         loadRegularFileContent(content, disk);
                         loadRegularFile(fileName, filePath, lastModified, content, size);
+                        MyOs::diskSize += size;
                     }
                     else if (fileType == DIRECTORY)
                     {
                         loadDirectory(fileName, filePath, lastModified);
+                        MyOs::diskSize += DIR_SIZE;
                     }
                     else if (fileType == LINK)
                     {
                         string linkedFilePath = properties[6].substr(properties[6].find("->") + 2);
-                        File *linkedFile = getSpesificFile(linkedFilePath);
+                        File *linkedFile = nullptr;
                         string linkName = linkedFilePath.substr(linkedFilePath.find_last_of("/") + 1);
                         loadLinkedFile(fileName, filePath, lastModified, linkName, linkedFilePath, linkedFile);
+                        MyOs::diskSize += LINK_SIZE;
                     }
                 }
             }
@@ -579,7 +630,7 @@ namespace OlkayOS
         disk.close();
     }
 
-    //throws exception
+    // load the directory from disk.txt
     void MyOs::loadDirectory(const string& name, const string& path, const string& lastModified)
     {
         Directory *newDir = new Directory(name, path, lastModified);
@@ -599,7 +650,7 @@ namespace OlkayOS
         }
     }
 
-    //throws runtime error
+    // load the regular file from disk.txt
     void MyOs::loadRegularFile(const string& name, const string& path, const string& lastModified, const string& content, const size_t& size)
     {
         RegularFile *newFile = new RegularFile(name, path, lastModified, content, size);
@@ -610,6 +661,7 @@ namespace OlkayOS
             throw std::runtime_error(NO_DIR_FILE);
     }
 
+    // load the content of the regular file from disk.txt
     void MyOs::loadRegularFileContent(std::string& content, std::ifstream &file)
     {
         string  line;
@@ -622,6 +674,7 @@ namespace OlkayOS
         content.pop_back(); //remove last \n
     }
 
+    // load the link file from disk.txt
     void MyOs::loadLinkedFile(const string& name, const string& path, const string& lastModified
                                 ,const string& linkName, const string& linkPath, File* linkedFile)
     {
@@ -633,21 +686,24 @@ namespace OlkayOS
             throw std::runtime_error(NO_DIR_FILE);
     }
 
-    //throws runtime error
+    // WRITES THE GIVEN FILE TO THE DISK
     void MyOs::writeDisk(File* data)
     {
         ofstream disk;
 
-        disk.open(DISK_NAME, std::ios::app);
         if (data == nullptr)
             throw std::runtime_error(NULLDATA);
+        disk.open(DISK_NAME, std::ios::app);
         if (disk.is_open())
         {
             if (data->getType() == DIRECTORY)
             {
                 Directory* dir = dynamic_cast<Directory *>(data);
                 if (MyOs::diskSize+DIR_SIZE > DISK_SIZE)
+                {
+                    disk.close();
                     throw std::runtime_error(DISK_FULL);
+                }
                 MyOs::diskSize += DIR_SIZE;
                 disk << *dir << "\n";
             }
@@ -655,7 +711,10 @@ namespace OlkayOS
             {
                 RegularFile* file = dynamic_cast<RegularFile *>(data);
                 if (MyOs::diskSize+file->getSize() > DISK_SIZE)
+                {
+                    disk.close();
                     throw std::runtime_error(DISK_FULL);
+                }
                 MyOs::diskSize += file->getSize();
                 disk << *file << "\n";
             }
@@ -663,14 +722,16 @@ namespace OlkayOS
             {
                 LinkedFile* file = dynamic_cast<LinkedFile *>(data);
                 if (MyOs::diskSize+LINK_SIZE > DISK_SIZE)
+                {
+                    disk.close();
                     throw std::runtime_error(DISK_FULL);
+                }
                 MyOs::diskSize += LINK_SIZE;
                 disk << *file << "\n";
             }
         }
         else
             throw std::runtime_error(CAN_NOT_OPEN_DISK);
-        updateTheLinks(rootDir);
         disk.close();
     }
 
@@ -701,7 +762,10 @@ namespace OlkayOS
         else if (file->getType() == DIRECTORY && args.size() == 3)
             rmRecursive(file, parentDir);
         else if (file->getType() == DIRECTORY && args.size() == 2)
+        {
+            std::cerr << RED << "[HELP] use rm -r for removing directory\n" << DEFAULT;
             throw std::runtime_error(IS_DIR);
+        }
         parentDir->setLastModified(getDateAndTime());
         updateDiskHelper();
         updateTheLinks(rootDir);
@@ -716,6 +780,7 @@ namespace OlkayOS
         parentDir->removeFile(file);
     }
 
+    // rm -r
     void MyOs::rmRecursive(File *file, Directory* parentDir)
     {
         if (file->getName() == "/")
@@ -736,6 +801,8 @@ namespace OlkayOS
         }
     }
 
+    // UPDATES THE DISK, reads all the files from the root directory
+    // to disk
     void MyOs::updateDisk(ofstream& ofs, Directory *curDir)
     {
         vector<File *> files = curDir->getFiles();
@@ -743,7 +810,9 @@ namespace OlkayOS
         {
             for (const auto& file : files)
             {
-                if (file->getType() == REGULAR_FILE)
+                if (file == nullptr)
+                    return ;
+                else if (file->getType() == REGULAR_FILE)
                 {
                     RegularFile *regFile = dynamic_cast<RegularFile *>(file);
                     ofs << *regFile << "\n";
@@ -757,8 +826,6 @@ namespace OlkayOS
                 else if (file->getType() == LINK)
                 {
                     LinkedFile *link = dynamic_cast<LinkedFile *>(file);
-                    if (isFileExistInMyOs(link->getLinkedFilePath()) == 0)
-                        link->setTheLink(nullptr);
                     ofs << *link << "\n";
                 }
             }
@@ -767,6 +834,7 @@ namespace OlkayOS
             throw std::runtime_error(CAN_NOT_OPEN_DISK);
     }
 
+    // helper function for updateDisk
     void MyOs::updateDiskHelper()
     {
         ofstream ofs;
@@ -776,9 +844,11 @@ namespace OlkayOS
         ofs << *rootDir << "\n";
         updateDisk(ofs, rootDir);
         ofs.close();
-
     }
 
+
+    // UPDATES THE LINK files after the mkdir, rm, rm -r, cp operands
+    // dir is root in the beginning, recursive function
     void MyOs::updateTheLinks(const Directory* dir)
     {
         vector<File *> files = dir->getFiles();
@@ -787,9 +857,9 @@ namespace OlkayOS
             if (file->getType() == LINK)
             {
                 LinkedFile *link = dynamic_cast<LinkedFile *>(file);
-                if (isFileExistInMyOs(link->getLinkedFilePath()) == 0)
+                if (isFileExistInDisk(link->getLinkedFilePath()) == 0)
                     link->setTheLink(nullptr);
-                else if (link->getLinkedFile() == nullptr)
+                else if (link->getLinkedFile() == nullptr && isFileExistInDisk(link->getLinkedFilePath()) == true)
                 {
                     File *linkedFile = getSpesificFile(link->getLinkedFilePath());
                     link->setTheLink(linkedFile);
@@ -803,11 +873,14 @@ namespace OlkayOS
         }
     }
 
+    // ln -s in unix
     void MyOs::ln(const vector<string >& args)
     {
         string absPathDest = getAbsolutePath(args[2]);
         string destName = absPathDest.substr(absPathDest.find_last_of("/") + 1);
         string destPath;
+        if (destName == "." || destName == ".." || destName.empty())
+            throw std::runtime_error(INVALID_DEST);
         Directory *parentDir = getParentDir(args[2]);
         if (parentDir == nullptr)
             throw std::runtime_error(NO_DIR_FILE);
