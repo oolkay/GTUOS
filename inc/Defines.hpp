@@ -1,6 +1,10 @@
 #ifndef DEFINES_HPP
 #define DEFINES_HPP
 
+#define DIR_SIZE      4096
+#define LINK_SIZE     6
+#define DISK_SIZE     10*1024*1024
+
 
 #define GREETING      "WELCOME TO THE olkayOS"
 
@@ -9,10 +13,8 @@
 #define EXTRA_ARG    "[ERROR] Too many arguments"
 #define CAN_NOT_REMOVE "[ERROR] You can not remove"
 #define CAN_NOT_LINK "[ERROR] The linked file is already exist"
-
 #define USER_NAME    "omer"
 #define HOST_NAME    "olkayOS"
-
 #define REGULAR_FILE 'F'
 #define LINK         'L'
 #define DIRECTORY    'D'
@@ -28,6 +30,11 @@
 #define NO_DIR_FILE "[ERROR] No such directory or file"
 #define INVALID_DEST "[ERROR] Invalid dest name"
 #define RM_CUR_DIR "[ERROR] You can not remove current directory"
+#define DISK_FULL "[ERROR] Operation cancelled, there is no enough space in disk"
+#define DISK_NAME "disk.txt"
+#define CAN_NOT_OPEN_DISK "[ERROR] Can not open disk"
+#define NULLDATA "[ERROR] Null data"
+
 
 #define DEFAULT "\033[0;39m"
 #define GRAY "\033[0;90m"
